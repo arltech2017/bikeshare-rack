@@ -1,4 +1,3 @@
-console.log("HI");
 var c = require('crypto');
 var secret = "ITSAKEY";
 var counter = 0;
