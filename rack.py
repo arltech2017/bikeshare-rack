@@ -1,5 +1,4 @@
 import hmac
-import hashlib
 import time
 
 class Key():
@@ -93,6 +92,7 @@ def remove_code(code):
 
 refresh_pool()
 print_pool(pool)
+"""
 print_time(pool)
 print(accept_code("167"))
 print_pool(pool)
@@ -101,3 +101,4 @@ time.sleep(3)
 print(accept_code("145"))
 print_pool(pool)
 print_time(pool)
+"""
