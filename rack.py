@@ -41,8 +41,8 @@ def refresh_pool():
     for i in range(len(pool)):
         if not pool[i]:
             key = truncate(hmac.new(secret.encode(), str(counter).encode(), "sha256"))
-            counter += 1
             pool[i] = Key(key, counter)
+            counter += 1
 
 def truncate(hmac):
     digest = hmac.hexdigest()
@@ -92,7 +92,7 @@ def remove_code(code):
 
 refresh_pool()
 print_pool(pool)
-"""
+
 print_time(pool)
 print(accept_code("167"))
 print_pool(pool)
@@ -101,4 +101,4 @@ time.sleep(3)
 print(accept_code("145"))
 print_pool(pool)
 print_time(pool)
-"""
+
