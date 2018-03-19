@@ -3,6 +3,7 @@
 
 import machine
 import time
+import hmac 
 
 cols = [machine.Pin(i, machine.Pin.OUT) for i in [21, 22, 23]]
 rows = [machine.Pin(i, machine.Pin.IN) for i in [16 ,17, 18, 19]]
@@ -10,6 +11,9 @@ rows = [machine.Pin(i, machine.Pin.IN) for i in [16 ,17, 18, 19]]
 accept_input = True
 
 stored_code = ""
+
+d = hmac.new("ITSAKEY".encode(), "0".encode(), "sha256")
+print(d.digest())
 
 def toggle(pin):
     value = pin.value()
