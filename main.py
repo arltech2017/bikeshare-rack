@@ -60,6 +60,7 @@ class Key():
         self.key = key
         self.invaltime = None
 
+#Iterates through the pool and for every None value, replaces it with a new key and increments the counter
 def refresh_pool():
     global counter
 
@@ -74,28 +75,33 @@ def format(i, args):
     argstr = '{:' + args + "}"
     return argstr.format(i)
 
-def truncate(hmac):
-    digest = hmac.hexdigest()
+#Takes a hash object, such as Sha256, and returns the first two bytes of its hex value, formated to be a three digit string
+def truncate(hashobj):
+    digest = hashobj.hexdigest()
     return format(int(digest[:2], 16), '03d')
 
+#Takes a string and returns whether the string is in the pool as a key. If the code is found, remove it from the pool and mark any previous codes as invalid.
+#Whether or not the code is found, remove any code that has been invalid for too long and then refresh the pool with new codes.
 def accept_code(code):
+    found = False
+
     for i in range(len(pool)):
         if pool[i] and pool[i].key == code:
             remove_code(code)
             invalidate_codes(pool[i].n)
-            remove_inval_codes()
-            refresh_pool()
-            return True
+            found = True
 
     remove_inval_codes()
     refresh_pool()
-    return False
+    return found 
 
+#Accepts a key number, presumably of a code that was just used, and marks any key with a lower number as invalid by setting its invalidated time
 def invalidate_codes(n):
     for i in range(len(pool)):
         if pool[i] and pool[i].invaltime == None and pool[i].n < n:
             pool[i].invaltime = time.time()
 
+#Removes any code that has been invalid for too long (that is, longer than global invallimit) 
 def remove_inval_codes():
     i = 0
     while i < len(pool):
@@ -108,6 +114,7 @@ def remove_inval_codes():
         else:
             i += 1
 
+#Removes a key from the pool and shifts the other keys to the left to fill its gap and maintain an ordered list
 def remove_code(code):
     found = False
     for i in range(len(pool)):
