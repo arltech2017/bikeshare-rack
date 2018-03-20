@@ -28,15 +28,9 @@ def get_pressed():
     return -1 
 
 def get_code(col, row):
-    if row < 3:
-        return (col + 1) + (row * 3)
-    else:
-        if col == 0:
-            return "*"
-        elif col == 1:
-            return 0
-        else:
-            return "#"
+    vals = [1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"]
+    index = (col + 1) + (row * 3)
+    return vals[index]
 
 def handle_code(code):
     global accept_input
@@ -76,9 +70,13 @@ def refresh_pool():
             counter += 1
     print("done")
 
+def format(i, args):
+    argstr = '{:' + args + "}"
+    return argstr.format(i)
+
 def truncate(hmac):
     digest = hmac.hexdigest()
-    return '{:03d}'.format(int(digest[:2], 16))
+    return format(int(digest[:2], 16), '03d')
 
 def accept_code(code):
     for i in range(len(pool)):
