@@ -3,8 +3,8 @@
 
 import machine
 import time
-import hmac 
-import _sha256 
+import hmac
+import _sha256
 
 cols = [machine.Pin(i, machine.Pin.OUT) for i in [21, 22, 23]]
 rows = [machine.Pin(i, machine.Pin.IN) for i in [16 ,17, 18, 19]]
@@ -25,7 +25,7 @@ def get_pressed():
                 col.value(0)
                 return get_code(i, j)
         col.value(0)
-    return -1 
+    return -1
 
 def get_code(col, row):
     vals = [1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"]
@@ -35,18 +35,18 @@ def get_code(col, row):
 def handle_code(code):
     global accept_input
     global stored_code
-    if not code == -1: 
+    if not code == -1:
         if accept_input:
-            accept_input = False 
+            accept_input = False
             if code == "#":
                 result = stored_code
                 stored_code = ""
                 print(accept_code(result))
             else:
-                stored_code += str(code) 
+                stored_code += str(code)
     else:
         accept_input = True
- 
+
 
 counter = 0
 secret = "ITSAKEY"
@@ -62,7 +62,7 @@ class Key():
 
 def refresh_pool():
     global counter
-    
+
     for i in range(len(pool)):
         if not pool[i]:
             key = truncate(hmac.new(secret.encode(), str(counter).encode(), _sha256.sha256))
@@ -122,5 +122,5 @@ def remove_code(code):
 
 refresh_pool()
 while True:
-    handle_code(get_pressed()) 
+    handle_code(get_pressed())
     time.sleep(0.1)
