@@ -17,24 +17,6 @@ def toggle(pin):
     value ^= 1
     pin.value(value)
 
-def get_pressed():
-    for i, col in enumerate(cols):
-        col.value(1)
-        for j, row in enumerate(rows):
-            if row.value() == 1:
-                col.value(0)
-                return get_code(i, j)
-        col.value(0)
-    return -1
-
-def get_code(col, row):
-    keypad = [['1', '2', '3'],
-              ['4', '5', '6'],
-              ['7', '8', '9'],
-              ['*', '0', '#']]
-
-    return keypad[row][col]
-
 def handle_code(code):
     global accept_input
     global stored_code
@@ -51,6 +33,11 @@ def handle_code(code):
         accept_input = True
 
 class Keypad():
+    buttons = ((1, 2, 3),
+               (4, 5, 6),
+               (7, 8, 9),
+               ("*", 0, "#"))
+
     def __init__(self, col_pins, row_pins):
         self.cols = [machine.Pin(i, machine.Pin.OUT) for i in col_pins]
         self.rows = [machine.Pin(i, machine.Pin.IN) for i row_pins]
@@ -63,14 +50,10 @@ class Keypad():
             for j, row in enumerate(self.rows):
                 if row.value() == 1:
                     col.value(0)
-                    return get_code(i, j)
+                    return self.buttons[j][i]
             col.value(0)
         return -1
 
-    def get_code(self, col, row):
-        vals = [1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"]
-        index = cols + (row * 3)
-        return vals[index]
 
 counter = 0
 secret = "ITSAKEY"
