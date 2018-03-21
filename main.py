@@ -14,7 +14,7 @@ class Keypad():
 
     def __init__(self, col_pins, row_pins):
         self.cols = [machine.Pin(i, machine.Pin.OUT) for i in col_pins]
-        self.rows = [machine.Pin(i, machine.Pin.IN) for i row_pins]
+        self.rows = [machine.Pin(i, machine.Pin.IN) for i in row_pins]
 
     @property
     def pressed(self):
@@ -126,6 +126,6 @@ def remove_code(code):
 
 
 refresh_pool()
-while True:
-    handle_code(get_pressed())
-    time.sleep(0.1)
+#while True:
+    #handle_code(get_pressed())
+    #time.sleep(0.1)
