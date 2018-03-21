@@ -17,34 +17,20 @@ def toggle(pin):
     value ^= 1
     pin.value(value)
 
-def handle_code(code):
-    global accept_input
-    global stored_code
-    if not code == -1:
-        if accept_input:
-            accept_input = False
-            if code == "#":
-                result = stored_code
-                stored_code = ""
-                print(accept_code(result))
-            else:
-                stored_code += str(code)
-    else:
-        accept_input = True
-
 class Keypad():
-    buttons = ((1, 2, 3),
-               (4, 5, 6),
-               (7, 8, 9),
-               ("*", 0, "#"))
+    buttons = (('1', '2', '3'),
+               ('4', '5', '6'),
+               ('7', '8', '9'),
+               ('*', '0', '#'))
 
     def __init__(self, col_pins, row_pins):
         self.cols = [machine.Pin(i, machine.Pin.OUT) for i in col_pins]
         self.rows = [machine.Pin(i, machine.Pin.IN) for i row_pins]
+
         self.stored_code = ""
         self.accept_input = True
 
-    def get_pressed(self):
+    def get_input(self):
         for i, col in enumerate(self.cols):
             col.value(1)
             for j, row in enumerate(self.rows):
@@ -52,7 +38,39 @@ class Keypad():
                     col.value(0)
                     return self.buttons[j][i]
             col.value(0)
-        return -1
+        return None
+
+    def get_next_pressed(self):
+        val = get_input() 
+        while not val:
+            val = get_input()
+        val2 = val 
+        while val:
+            val = get_input()
+            if val:
+                val2 = val
+        return val2 
+        
+
+    def process_input(self, button):
+        #If no keys are being pressed, the keypad can accept another number
+        if button == -1:
+            accept_input = True
+        else:
+            if self.accept_input:
+                accept_input = False
+                if button == "#":
+                    result = self.stored_code
+                    stored_code = ""
+
+                    #Here is where you actually unlock a bike if returns true
+                    print(accept_code(result))
+
+                else:
+                    self.stored_code += code
+
+        else:
+            accept_input
 
 
 counter = 0
