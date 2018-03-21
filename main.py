@@ -52,13 +52,13 @@ class Keypad():
                 val2 = val
         return val2 
         
-    def handle_input(self, num):
-        if num == "#":
-            self.stored_code += num
-        else:
-            result = self.stored_code
-            self.stored_code = ""
-            print(accept_code(result))
+    def get_input_message(self):
+        message = ""
+        button = get_next_pressed()
+        while not button == '#':
+            message += button
+            button.get_next_pressed()
+        return message
 
 counter = 0
 secret = "ITSAKEY"
