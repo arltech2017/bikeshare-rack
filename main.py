@@ -29,7 +29,7 @@ def get_pressed():
 
 def get_code(col, row):
     vals = [1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"]
-    index = (col + 1) + (row * 3)
+    index = col + (row * 3)
     return vals[index]
 
 def handle_code(code):
@@ -47,7 +47,6 @@ def handle_code(code):
     else:
         accept_input = True
 
-
 counter = 0
 secret = "ITSAKEY"
 
@@ -59,6 +58,7 @@ class Key():
         self.n = n
         self.key = key
         self.invaltime = None
+
 
 #Iterates through the pool and for every None value, replaces it with a new key and increments the counter
 def refresh_pool():
