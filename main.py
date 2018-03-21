@@ -30,7 +30,8 @@ class Keypad():
         self.stored_code = ""
         self.accept_input = True
 
-    def get_input(self):
+    @property
+    def pressed(self):
         for i, col in enumerate(self.cols):
             col.value(1)
             for j, row in enumerate(self.rows):
@@ -41,37 +42,23 @@ class Keypad():
         return None
 
     def get_next_pressed(self):
-        val = get_input() 
+        val = self.pressed 
         while not val:
-            val = get_input()
+            val = self.pressed
         val2 = val 
         while val:
-            val = get_input()
+            val = self.pressed
             if val:
                 val2 = val
         return val2 
         
-
-    def process_input(self, button):
-        #If no keys are being pressed, the keypad can accept another number
-        if button == -1:
-            accept_input = True
+    def handle_input(self, num):
+        if num == "#":
+            self.stored_code += num
         else:
-            if self.accept_input:
-                accept_input = False
-                if button == "#":
-                    result = self.stored_code
-                    stored_code = ""
-
-                    #Here is where you actually unlock a bike if returns true
-                    print(accept_code(result))
-
-                else:
-                    self.stored_code += code
-
-        else:
-            accept_input
-
+            result = self.stored_code
+            self.stored_code = ""
+            print(accept_code(result))
 
 counter = 0
 secret = "ITSAKEY"
