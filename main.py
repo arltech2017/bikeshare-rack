@@ -58,6 +58,22 @@ class Key():
         self.key = key
         self.invaltime = None
 
+class HOTP():
+    def __init__(self, secret, hash_func):
+        self.secret = secret
+        self.hash_func = hash_func
+    
+    def at(self, counter):
+        return truncate(hmac.new(self.secret.encode(), str(counter.encode(), self.hash_func)))
+
+    def truncate(self, hash_obj):
+        digest = hash_obj.hexdigest()
+        return format(int(digest[:2], 16), '03d')
+
+def format(i, args):
+    argstr = '{:' + args + '}'
+    return argstr.format(i)
+
 #Iterates through the pool and for every None value, replaces it with a new key and increments the counter
 def refresh_pool():
     global counter
@@ -68,15 +84,6 @@ def refresh_pool():
             pool[i] = Key(key, counter)
             counter += 1
     print("done")
-
-def format(i, args):
-    argstr = '{:' + args + "}"
-    return argstr.format(i)
-
-#Takes a hash object, such as Sha256, and returns the first two bytes of its hex value, formated to be a three digit string
-def truncate(hashobj):
-    digest = hashobj.hexdigest()
-    return format(int(digest[:2], 16), '03d')
 
 #Takes a string and returns whether the string is in the pool as a key. If the code is found, remove it from the pool and mark any previous codes as invalid.
 #Whether or not the code is found, remove any code that has been invalid for too long and then refresh the pool with new codes.
