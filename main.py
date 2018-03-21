@@ -28,9 +28,12 @@ def get_pressed():
     return -1
 
 def get_code(col, row):
-    vals = [1, 2, 3, 4, 5, 6, 7, 8, 9, "*", 0, "#"]
-    index = col + (row * 3)
-    return vals[index]
+    keypad = [['1', '2', '3'],
+              ['4', '5', '6'],
+              ['7', '8', '9'],
+              ['*', '0', '#']]
+
+    return keypad[row][col]
 
 def handle_code(code):
     global accept_input
@@ -115,7 +118,7 @@ def accept_code(code):
 
     remove_inval_codes()
     refresh_pool()
-    return found 
+    return found
 
 #Accepts a key number, presumably of a code that was just used, and marks any key with a lower number as invalid by setting its invalidated time
 def invalidate_codes(n):
@@ -123,7 +126,7 @@ def invalidate_codes(n):
         if pool[i] and pool[i].invaltime == None and pool[i].n < n:
             pool[i].invaltime = time.time()
 
-#Removes any code that has been invalid for too long (that is, longer than global invallimit) 
+#Removes any code that has been invalid for too long (that is, longer than global invallimit)
 def remove_inval_codes():
     i = 0
     while i < len(pool):
