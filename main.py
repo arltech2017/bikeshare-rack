@@ -16,9 +16,6 @@ class Keypad():
         self.cols = [machine.Pin(i, machine.Pin.OUT) for i in col_pins]
         self.rows = [machine.Pin(i, machine.Pin.IN) for i row_pins]
 
-        self.stored_code = ""
-        self.accept_input = True
-
     @property
     def pressed(self):
         for i, col in enumerate(self.cols):
@@ -60,7 +57,6 @@ class Key():
         self.n = n
         self.key = key
         self.invaltime = None
-
 
 #Iterates through the pool and for every None value, replaces it with a new key and increments the counter
 def refresh_pool():
