@@ -62,9 +62,9 @@ class HOTP():
     def __init__(self, secret, hash_func):
         self.secret = secret
         self.hash_func = hash_func
-    
+
     def at(self, counter):
-        return truncate(hmac.new(self.secret.encode(), str(counter.encode(), self.hash_func)))
+        return truncate(hmac.new(self.secret.encode(), str(counter).encode(), self.hash_func))
 
     def truncate(self, hash_obj):
         digest = hash_obj.hexdigest()
