@@ -6,17 +6,6 @@ import time
 import hmac
 import _sha256
 
-cols = [machine.Pin(i, machine.Pin.OUT) for i in [21, 22, 23]]
-rows = [machine.Pin(i, machine.Pin.IN) for i in [16 ,17, 18, 19]]
-
-accept_input = True
-stored_code = ""
-
-def toggle(pin):
-    value = pin.value()
-    value ^= 1
-    pin.value(value)
-
 class Keypad():
     buttons = (('1', '2', '3'),
                ('4', '5', '6'),
