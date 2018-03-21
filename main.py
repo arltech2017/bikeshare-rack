@@ -133,6 +133,9 @@ def remove_code(code):
 
 
 refresh_pool()
-#while True:
-    #handle_code(get_pressed())
-    #time.sleep(0.1)
+
+kp = Keypad((21, 22, 23), (16, 17, 18, 19))
+
+while True:
+    accept_code(kp.get_input_message())
+    time.sleep(0.1)
