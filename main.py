@@ -54,10 +54,10 @@ class Keypad():
         
     def get_input_message(self):
         message = ""
-        button = get_next_pressed()
+        button = self.get_next_pressed()
         while not button == '#':
             message += button
-            button.get_next_pressed()
+            button = self.get_next_pressed()
         return message
 
 counter = 0
