@@ -56,6 +56,8 @@ class Key():
 
 
 class HOTP():
+    codelen = 3
+
     def __init__(self, secret, hash_func):
         self.secret = secret
         self.hash_func = hash_func
@@ -68,9 +70,9 @@ class HOTP():
                 self.hash_func
             ).hexdigest())
 
-    def truncate(self, hash_obj):
-        #digest = hash_obj.hexdigest()
-        return format(int(hash_obj, 16) % 10, '03d')
+    def truncate(self, hashstr):
+        return format(int(hashstr, 16) % 10 ** self.codelen,
+                      '0{}d'.format(self.codelen), '03d')
 
 
 def format(i, args):
