@@ -61,16 +61,16 @@ class HOTP():
         self.hash_func = hash_func
 
     def at(self, counter):
-        return truncate(
+        return self.truncate(
             hmac.new(
                 self.secret.encode(),
                 str(counter).encode(),
                 self.hash_func
-            ))
+            ).hexdigest())
 
     def truncate(self, hash_obj):
-        digest = hash_obj.hexdigest()
-        return format(int(digest[:2], 16), '03d')
+        #digest = hash_obj.hexdigest()
+        return format(int(hash_obj, 16) % 10, '03d')
 
 
 def format(i, args):
