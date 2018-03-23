@@ -1,18 +1,25 @@
 #!/usr/bin/env nodejs
 var c = require('crypto');
 var secret = "ITSAKEY";
-var counter = 0;
+
+codelen = 3
+
+function pad(num, size) {
+    var s = num+"";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
 
 function createCode(message) {
-	    hex = c.createHmac('sha256', secret).update(message).digest('hex');
-		code = truncate(hex);
-	    return code;
+	hex = c.createHmac('sha256', secret).update(message).digest('hex')
+	code = truncate(hex);
+	return code;
 }
 
 function truncate(hex) { 
-	    return parseInt(hex.substring(0, 2), 16);
+	    //return pad(parseInt(hex.substring(0, 2), 16), 3);
+	return pad(parseInt(hex, 16) % (Math.pow(10, codelen)), codelen);
 }
-
 
 var fs =  require('fs');
 function countUp() {
@@ -22,5 +29,6 @@ function countUp() {
 }
 
 console.log("Content-type: plain/text\n");
-counter = countUp()
-console.log(createCode(counter.trim()))
+counter = countUp().trim()
+index = "0"
+console.log(createCode(counter) + createCode(counter + index))
