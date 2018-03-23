@@ -132,7 +132,15 @@ class Pool():
         return self.pool[index]
 
 
-def accept_code(pool, code):
+def accept_code(pool, ccept_code(pool, code):
+    """
+    Takes a string and returns whether the string is in the pool as a key. If
+    the code is found, remove it from the pool and mark any previous codes as
+    invalid.
+    Whether or not the code is found, remove any code that has been invalid for
+    too long and then refresh the pool with new codes.
+    """
+
     global counter #Not needed here, but a reminder that counter will need to be updated after this method
 
     found = False
@@ -181,5 +189,5 @@ pool = Pool(10, hotp, 3600)
 counter = 10 #Set counter to 10 initially because calling Pool() initializes the first 10 keys
 
 while True:
-    accept_code(kp.get_input_message())
+    accept_code(pool, kp.get_input_message())
     time.sleep(0.1)
