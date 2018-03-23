@@ -72,7 +72,7 @@ class HOTP():
 
     def truncate(self, hashstr):
         return format(int(hashstr, 16) % 10 ** self.codelen,
-                      '0{}d'.format(self.codelen), '03d')
+                      '0{}d'.format(self.codelen))
 
 
 def format(i, args):
