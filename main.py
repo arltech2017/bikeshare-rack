@@ -103,7 +103,7 @@ class Pool():
         for i in range(len(self.pool)):
             if not self.pool[i]:
                 key = self.encryption.at(counter) 
-                pool[i] = Key(key, counter)
+                self.pool[i] = Key(key, counter)
                 counter += 1
         print("Done repopulating pool")
         return counter
