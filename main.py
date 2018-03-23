@@ -48,13 +48,6 @@ class Keypad():
         return message
 
 
-counter = 0
-secret = "ITSAKEY"
-
-pool = [None] * 10
-invallimit = 2
-
-
 class Key():
     def __init__(self, key, n):
         self.n = n
@@ -83,6 +76,7 @@ class HOTP():
 def format(i, args):
     argstr = '{:' + args + '}'
     return argstr.format(i)
+
 
 class Pool():
     def __init__(self, size, encryption, inval_time_limit):
@@ -182,7 +176,8 @@ def remove_inval_codes(pool):
             i += 1
 
 kp = Keypad((21, 22, 23), (16, 17, 18, 19))
-pool = Pool(10, HOTP(), 3600)
+hotp = HOTP("ITSAKEY", _sha256.sha256)
+pool = Pool(10, hotp, 3600)
 counter = 10 #Set counter to 10 initially because calling Pool() initializes the first 10 keys
 
 while True:
