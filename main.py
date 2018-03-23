@@ -84,28 +84,54 @@ def format(i, args):
     argstr = '{:' + args + '}'
     return argstr.format(i)
 
+class Pool():
+    def __init__(self, size, encryption, inval_time_limit):
+        """Accepts three arguments:
+            -the size of the pool
+            -the class used to encrypt the counter, should be HOTP() 
+            -the length of time after which an invalid code will be removed
 
-def refresh_pool():
-    """
-    Iterates through the pool and for every None value, replaces it with a new
-    key and increments the counter
-    """
-    global counter
+        Initially fills up the pool
+        """
+        self.pool = [None] * size
+        self.encryption = encryption 
+        self.inval_time_limit = inval_time_limit
+        self.repopulate()
 
-    for i in range(len(pool)):
-        if not pool[i]:
-            key = truncate(
-                hmac.new(
-                    secret.encode(),
-                    str(counter).encode(),
-                    _sha256.sha256
-                ))
-            pool[i] = Key(key, counter)
-            counter += 1
-    print("done")
+    def repopulate(self, counter):
+        """
+        Iterates through the pool and for every None value, replaces it with a new
+        key and increments the counter
+        Since counter is being passed to it, returns the updated counter. The code
+        calling this function should set its counter to the return value of this
+        function
+        """
+        for i in range(len(self.pool)):
+            if not self.pool[i]:
+                key = self.encryption.at(counter) 
+                pool[i] = Key(key, counter)
+                counter += 1
+        print("Done repopulating pool")
+        return counter
+
+    def remove_code(self, code):
+        """
+        Removes a key from the pool and shifts the other keys to the left to fill
+        its gap and maintain an ordered list
+        """
+        found = False
+        for i in range(len(self.pool)):
+            if self.pool[i] and code == self.pool[i].key:
+                found = True
+            if found:
+                if i + 1 >= len(self.pool):
+                    self.pool[i] = None
+                else:
+                    self.pool[i] = self.pool[i + 1]
 
 
-def accept_code(code):
+
+def accept_code(pool, code):
     """
     Takes a string and returns whether the string is in the pool as a key. If
     the code is found, remove it from the pool and mark any previous codes as
@@ -126,7 +152,7 @@ def accept_code(code):
     return found
 
 
-def invalidate_codes(n):
+def invalidate_codes(pool, n):
     """
     Accepts a key number, presumably of a code that was just used, and marks
     any key with a lower number as invalid by setting its invalidated time
@@ -136,7 +162,7 @@ def invalidate_codes(n):
             pool[i].invaltime = time.time()
 
 
-def remove_inval_codes():
+def remove_inval_codes(pool):
     """
     Removes any code that has been invalid for too long (that is, longer than
     global invallimit)
@@ -145,33 +171,15 @@ def remove_inval_codes():
     while i < len(pool):
         if pool[i] and pool[i].invaltime:
             diff = time.time() - pool[i].invaltime
-            if diff >= invallimit:
+            if diff >= pool.inval_time_limit:
                 remove_code(pool[i].key)
             else:
                 i += 1
         else:
             i += 1
 
-
-def remove_code(code):
-    """
-    Removes a key from the pool and shifts the other keys to the left to fill
-    its gap and maintain an ordered list
-    """
-    found = False
-    for i in range(len(pool)):
-        if pool[i] and code == pool[i].key:
-            found = True
-        if found:
-            if i + 1 >= len(pool):
-                pool[i] = None
-            else:
-                pool[i] = pool[i + 1]
-
-
-refresh_pool()
-
 kp = Keypad((21, 22, 23), (16, 17, 18, 19))
+pool = Pool(10, HOTP(), 3600)
 
 while True:
     accept_code(kp.get_input_message())
