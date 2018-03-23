@@ -125,17 +125,14 @@ class Pool():
                 else:
                     self.pool[i] = self.pool[i + 1]
 
+    def __len__(self):
+        return len(self.pool)
+
+    def __getitem__(self, index):
+        return self.pool[index]
 
 
 def accept_code(pool, code):
-    """
-    Takes a string and returns whether the string is in the pool as a key. If
-    the code is found, remove it from the pool and mark any previous codes as
-    invalid.
-    Whether or not the code is found, remove any code that has been invalid for
-    too long and then refresh the pool with new codes.
-    """
-
     global counter #Not needed here, but a reminder that counter will need to be updated after this method
 
     found = False
@@ -143,11 +140,12 @@ def accept_code(pool, code):
     for i in range(len(pool)):
         if pool[i] and pool[i].key == code:
             pool.remove_code(code)
-            invalidate_codes(pool[i].n)
+            invalidate_codes(pool, pool[i].n)
             found = True
 
-    remove_inval_codes()
-    counter = pool.repopulate() #update counter here
+    remove_inval_codes(pool)
+    counter = pool.repopulate(counter) #update counter here
+    1+1
     return found
 
 
