@@ -96,7 +96,7 @@ class Pool():
         self.pool = [None] * size
         self.encryption = encryption 
         self.inval_time_limit = inval_time_limit
-        self.repopulate()
+        self.repopulate(0)
 
     def repopulate(self, counter):
         """
@@ -139,16 +139,19 @@ def accept_code(pool, code):
     Whether or not the code is found, remove any code that has been invalid for
     too long and then refresh the pool with new codes.
     """
+
+    global counter #Not needed here, but a reminder that counter will need to be updated after this method
+
     found = False
 
     for i in range(len(pool)):
         if pool[i] and pool[i].key == code:
-            remove_code(code)
+            pool.remove_code(code)
             invalidate_codes(pool[i].n)
             found = True
 
     remove_inval_codes()
-    refresh_pool()
+    counter = pool.repopulate() #update counter here
     return found
 
 
@@ -172,7 +175,7 @@ def remove_inval_codes(pool):
         if pool[i] and pool[i].invaltime:
             diff = time.time() - pool[i].invaltime
             if diff >= pool.inval_time_limit:
-                remove_code(pool[i].key)
+                pool.remove_code(pool[i].key)
             else:
                 i += 1
         else:
@@ -180,6 +183,7 @@ def remove_inval_codes(pool):
 
 kp = Keypad((21, 22, 23), (16, 17, 18, 19))
 pool = Pool(10, HOTP(), 3600)
+counter = 10 #Set counter to 10 initially because calling Pool() initializes the first 10 keys
 
 while True:
     accept_code(kp.get_input_message())
