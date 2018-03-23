@@ -84,13 +84,13 @@ class Pool():
     def __init__(self, size, encryption, inval_time_limit):
         """Accepts three arguments:
             -the size of the pool
-            -the class used to encrypt the counter, should be HOTP() 
+            -the class used to encrypt the counter, should be HOTP()
             -the length of time after which an invalid code will be removed
 
         Initially fills up the pool
         """
         self.pool = [None] * size
-        self.encryption = encryption 
+        self.encryption = encryption
         self.inval_time_limit = inval_time_limit
         self.repopulate(0)
 
@@ -104,7 +104,7 @@ class Pool():
         """
         for i in range(len(self.pool)):
             if not self.pool[i]:
-                key = self.encryption.at(counter) 
+                key = self.encryption.at(counter)
                 self.pool[i] = Key(key, counter)
                 counter += 1
         print("Done repopulating pool")
