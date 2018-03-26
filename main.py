@@ -51,8 +51,11 @@ class Keypad():
 class Key():
     def __init__(self, key, n):
         self.n = n
-        self.key = key
+        self.keys = [None] * 12
+        for i in range(len(self.keys)):
+            self.keys = key + hotp.at(int(key) + i)
         self.invaltime = None
+        print("Key done")
 
 
 class HOTP():
@@ -71,7 +74,7 @@ class HOTP():
             ).hexdigest())
 
     def truncate(self, hashstr):
-        return format(int(hashstr, 16) % 10 ** self.codelen,
+        return format(int(hashstr, 16) % (10 ** self.codelen),
                       '0{}d'.format(self.codelen))
 
 
@@ -117,7 +120,7 @@ class Pool():
         """
         found = False
         for i in range(len(self.pool)):
-            if self.pool[i] and code == self.pool[i].key:
+            if self.pool[i] and code in self.pool[i].keys:
                 found = True
             if found:
                 if i + 1 >= len(self.pool):
@@ -132,7 +135,7 @@ class Pool():
         return self.pool[index]
 
 
-def accept_code(pool, ccept_code(pool, code):
+def accept_code(pool, code):
     """
     Takes a string and returns whether the string is in the pool as a key. If
     the code is found, remove it from the pool and mark any previous codes as
@@ -146,14 +149,14 @@ def accept_code(pool, ccept_code(pool, code):
     found = False
 
     for i in range(len(pool)):
-        if pool[i] and pool[i].key == code:
+        if pool[i] and code in pool[i].keys:
             pool.remove_code(code)
             invalidate_codes(pool, pool[i].n)
             found = True
 
     remove_inval_codes(pool)
     counter = pool.repopulate(counter) #update counter here
-    1+1
+    print(found)
     return found
 
 
@@ -189,5 +192,7 @@ pool = Pool(10, hotp, 3600)
 counter = 10 #Set counter to 10 initially because calling Pool() initializes the first 10 keys
 
 while True:
-    accept_code(pool, kp.get_input_message())
+    #accept_code(pool, kp.get_input_message())
+    print(kp.get_input_message())
+    #print("HI")
     time.sleep(0.1)
