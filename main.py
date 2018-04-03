@@ -51,7 +51,7 @@ class Keypad():
 class Key():
     def __init__(self, key, n):
         self.n = n
-        self.key = key 
+        self.key = key
         self.invaltime = None
         print("key done")
 
