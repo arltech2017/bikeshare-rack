@@ -51,7 +51,7 @@ class Keypad():
 class Key():
     def __init__(self, key, n):
         self.n = n
-        self.keys = [None] * 2 
+        self.keys = [None] * 2
         for i in range(len(self.keys)):
             self.keys[i] = str(key) + str(hotp.at(int(key) + i))
         self.invaltime = None
@@ -181,7 +181,7 @@ class Pool():
                     if code == key:
                         self.remove_code(code)
                         self.invalidate_codes(pool[i].n)
-                        found = j 
+                        found = j
 
         self.remove_inval_codes()
         counter = self.repopulate(counter) #update counter here
