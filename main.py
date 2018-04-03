@@ -57,7 +57,7 @@ class Key():
 
     def is_valid(self, code):
         for i in range(2):
-            full_code = str(self.key) + str(hotp.at(int(self.key) + i))
+            full_code = self.key + str(hotp.at(self.key + str(i)))
             if full_code == code:
                 return i
         return None
