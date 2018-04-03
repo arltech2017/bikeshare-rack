@@ -51,11 +51,16 @@ class Keypad():
 class Key():
     def __init__(self, key, n):
         self.n = n
-        self.keys = [None] * 2 
-        for i in range(len(self.keys)):
-            self.keys[i] = str(key) + str(hotp.at(int(key) + i))
+        self.key = key 
         self.invaltime = None
         print("Key done")
+
+    def is_valid(self, code):
+        for i in range(2):
+            full_code = str(self.key) + str(hotp.at(int(self.key) + i))
+            if full_code == code:
+                return i
+        return None
 
     def __str__(self):
         s = '['
@@ -128,7 +133,7 @@ class Pool():
         """
         found = False
         for i in range(len(self.pool)):
-            if self.pool[i] and code in self.pool[i].keys:
+            if self.pool[i] and self.pool[i].is_valid(code):
                 found = True
             if found:
                 if i + 1 >= len(self.pool):
@@ -177,11 +182,9 @@ class Pool():
 
         for i in range(len(self.pool)):
             if self.pool[i]:
-                for j, key in enumerate(self.pool[i].keys):
-                    if code == key:
-                        self.remove_code(code)
-                        self.invalidate_codes(pool[i].n)
-                        found = j 
+                result = self.pool[i].is_valid(code)
+                if result:
+                    found = result
 
         self.remove_inval_codes()
         counter = self.repopulate(counter) #update counter here
