@@ -69,7 +69,7 @@ class Key():
 class HOTP():
     codelen = 3
 
-    def __init__(self, secret, hash_func):
+    def __init__(self, secret, hash_func=sha256.sha256):
         self.secret = secret
         self.hash_func = hash_func
 
