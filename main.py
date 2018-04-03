@@ -53,23 +53,17 @@ class Key():
         self.n = n
         self.key = key 
         self.invaltime = None
-        print("Key done")
+        print("key done")
 
     def is_valid(self, code):
-        for i in range(2):
+        for i in range(12):
             full_code = self.key + str(hotp.at(self.key + str(i)))
             if full_code == code:
                 return i
         return None
 
     def __str__(self):
-        s = '['
-        for i in range(len(self.keys)):
-            s += str(self.keys[i])
-            if not i+1 == len(self.keys):
-                s += ', '
-        s += ']'
-        return s
+        return self.key
 
 class HOTP():
     codelen = 3
@@ -182,13 +176,12 @@ class Pool():
 
         for i in range(len(self.pool)):
             if self.pool[i]:
-                result = self.pool[i].is_valid(code)
-                if result:
-                    found = result
-
-        self.remove_inval_codes()
-        counter = self.repopulate(counter) #update counter here
-        return found
+                if code[:3] == self.pool[i].key:
+                    result = self.pool[i].is_valid(code)
+                    if result is not None:
+                        self.remove_inval_codes()
+                        counter = self.repopulate(counter) #update counter here
+                        return result 
 
     def remove_inval_codes(self):
         """
