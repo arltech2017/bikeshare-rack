@@ -4,7 +4,7 @@
 import machine
 import time
 import hmac
-import _sha256
+import _sha256 as sha256
 
 
 class Keypad():
@@ -208,7 +208,7 @@ class Pool():
                 i += 1
 
 kp = Keypad((21, 22, 23), (16, 17, 18, 19))
-hotp = HOTP("ITSAKEY", _sha256.sha256)
+hotp = HOTP("ITSAKEY", sha256.sha256)
 pool = Pool(10, hotp, 3600)
 counter = 10 #Set counter to 10 initially because calling Pool() initializes the first 10 keys
 
