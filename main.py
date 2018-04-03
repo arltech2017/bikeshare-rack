@@ -142,13 +142,7 @@ class Pool():
         return self.pool[index]
 
     def __str__(self):
-        s = "["
-        for i in range(len(self.pool)):
-            s += str(self.pool[i])
-            if not i+1 == len(self.pool):
-                s += ", "
-        s += "]"
-        return s
+        return "Pool" + str(self.pool)
 
     def invalidate_codes(self, n):
         """
