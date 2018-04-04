@@ -141,7 +141,7 @@ class Pool():
                     self.pool[i] = None
                 else:
                     self.pool[i] = self.pool[i + 1]
-
+                    
     def invalidate_codes(self, n):
         """
         Accepts a key number, presumably of a code that was just used, and marks
