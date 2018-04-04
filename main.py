@@ -6,7 +6,6 @@ import time
 import hmac
 import _sha256 as sha256
 
-
 class Keypad():
     buttons = (('1', '2', '3'),
                ('4', '5', '6'),
@@ -47,23 +46,31 @@ class Keypad():
             button = self.get_next_pressed()
         return message
 
-
 class Key():
     def __init__(self, key, n):
         self.n = n
-        self.key = key 
+        self.keys = [None] * 2
+        for i in range(len(self.keys)):
+            self.keys[i] = key + str(hotp.at(key + str(i)))
         self.invaltime = None
         print("key done")
 
-    def is_valid(self, code):
-        for i in range(12):
-            full_code = self.key + str(hotp.at(self.key + str(i)))
-            if full_code == code:
-                return i
-        return None
+    def __getitem__(self, i):
+        return self.keys[i]
+
+    def __contains__(self, code):
+        return code in self.keys
 
     def __str__(self):
-        return self.key
+        s = '['
+        for i in range(len(self.keys)):
+            if self.invaltime:
+                s+='I'
+            s += self.keys[i]
+            if i+1 < len(self.keys):
+                s += ', '
+        s += ']'
+        return s
 
 class HOTP():
     codelen = 3
@@ -120,35 +127,20 @@ class Pool():
         print("Done repopulating pool")
         return counter
 
-    def remove_code(self, code):
+    def remove_key(self, key):
         """
         Removes a key from the pool and shifts the other keys to the left to fill
         its gap and maintain an ordered list
         """
         found = False
         for i in range(len(self.pool)):
-            if self.pool[i] and self.pool[i].is_valid(code):
+            if self.pool[i] and self.pool[i].keys is key.keys:
                 found = True
             if found:
                 if i + 1 >= len(self.pool):
                     self.pool[i] = None
                 else:
                     self.pool[i] = self.pool[i + 1]
-
-    def __len__(self):
-        return len(self.pool)
-
-    def __getitem__(self, index):
-        return self.pool[index]
-
-    def __str__(self):
-        s = "["
-        for i in range(len(self.pool)):
-            s += str(self.pool[i])
-            if not i+1 == len(self.pool):
-                s += ", "
-        s += "]"
-        return s
 
     def invalidate_codes(self, n):
         """
@@ -172,16 +164,17 @@ class Pool():
 
         global counter #Not needed here, but a reminder that counter will need to be updated after this method
 
-        found = False
-
         for i in range(len(self.pool)):
-            if self.pool[i]:
-                if code[:3] == self.pool[i].key:
-                    result = self.pool[i].is_valid(code)
-                    if result is not None:
+            key = self.pool[i]
+            if key:
+                for j in range(len(key.keys)):
+                    if code == key.keys[j]:
                         self.remove_inval_codes()
+                        self.invalidate_codes(key.n)
                         counter = self.repopulate(counter) #update counter here
-                        return result 
+                        return j
+
+        return None
 
     def remove_inval_codes(self):
         """
@@ -190,6 +183,7 @@ class Pool():
         Uses while() instead of for() because once a code is removed, everything shifts over an
         index, so you want to check that index again.
         """
+
         i = 0
         while i < len(pool):
             found = False
@@ -197,20 +191,35 @@ class Pool():
             if key and key.invaltime:
                 diff = time.time() - key.invaltime
                 if diff >= self.inval_time_limit:
-                    self.remove_code(key.key)
+                    self.remove_key(key)
                     found = True
+            i += 1
 
-            if not found:
-                i += 1
+    def __len__(self):
+        return len(self.pool)
 
+    def __getitem__(self, index):
+        return self.pool[index]
+
+    def __str__(self):
+        s = "["
+        for i in range(len(self.pool)):
+            s += str(self.pool[i])
+            if not i+1 == len(self.pool):
+                s += ", "
+        s += "]"
+        return s
+
+
+print("HI")
 kp = Keypad((21, 22, 23), (16, 17, 18, 19))
 hotp = HOTP("ITSAKEY", sha256.sha256)
-pool = Pool(10, hotp, 3600)
+pool = Pool(10, hotp, 2)
 counter = 10 #Set counter to 10 initially because calling Pool() initializes the first 10 keys
 
 print(pool)
 
 while True:
-    print(pool.accept_code(kp.get_input_message()))
+    print(pool.accept_code(kp.get_input_message))
     #print("HI")
     time.sleep(0.1)
