@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 
-import machine
+#import machine
 import time
 import hmac
 import _sha256 as sha256
 
+class Keypad():
+    def __init__(self, x, y):
+        pass
+
+    def get_input_message(self):
+        return input()
+
+"""
 class Keypad():
     buttons = (('1', '2', '3'),
                ('4', '5', '6'),
@@ -45,6 +53,8 @@ class Keypad():
             message += button
             button = self.get_next_pressed()
         return message
+"""
+
 
 class Key():
     def __init__(self, key, n):
@@ -125,6 +135,7 @@ class Pool():
                 self.pool[i] = Key(key, counter)
                 counter += 1
         print("Done repopulating pool")
+        print(self)
         return counter
 
     def remove_key(self, key):
@@ -169,6 +180,7 @@ class Pool():
             if key:
                 for j in range(len(key.keys)):
                     if code == key.keys[j]:
+                        self.remove_key(key)
                         self.remove_inval_codes()
                         self.invalidate_codes(key.n)
                         counter = self.repopulate(counter) #update counter here
@@ -193,7 +205,8 @@ class Pool():
                 if diff >= self.inval_time_limit:
                     self.remove_key(key)
                     found = True
-            i += 1
+            if not found:
+                i += 1
 
     def __len__(self):
         return len(self.pool)
@@ -211,15 +224,13 @@ class Pool():
         return s
 
 
-print("HI")
 kp = Keypad((21, 22, 23), (16, 17, 18, 19))
 hotp = HOTP("ITSAKEY", sha256.sha256)
-pool = Pool(10, hotp, 2)
+pool = Pool(10, hotp, 3600) #set invalid time to an hour (3600 seconds)
 counter = 10 #Set counter to 10 initially because calling Pool() initializes the first 10 keys
 
 print(pool)
 
 while True:
-    print(pool.accept_code(kp.get_input_message))
-    #print("HI")
+    print(pool.accept_code(kp.get_input_message()))
     time.sleep(0.1)
