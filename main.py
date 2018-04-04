@@ -1,19 +1,12 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 
-#import machine
+import machine
 import time
 import hmac
 import _sha256 as sha256
 
-class Keypad():
-    def __init__(self, x, y):
-        pass
 
-    def get_input_message(self):
-        return input()
-
-"""
 class Keypad():
     buttons = (('1', '2', '3'),
                ('4', '5', '6'),
@@ -53,7 +46,6 @@ class Keypad():
             message += button
             button = self.get_next_pressed()
         return message
-"""
 
 
 class Key():
@@ -81,6 +73,7 @@ class Key():
                 s += ', '
         s += ']'
         return s
+
 
 class HOTP():
     codelen = 3
@@ -135,7 +128,6 @@ class Pool():
                 self.pool[i] = Key(key, counter)
                 counter += 1
         print("Done repopulating pool")
-        print(self)
         return counter
 
     def remove_key(self, key):
