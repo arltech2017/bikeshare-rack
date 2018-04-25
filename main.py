@@ -144,7 +144,7 @@ class Pool():
                     self.pool[i] = None
                 else:
                     self.pool[i] = self.pool[i + 1]
-                    
+
     def invalidate_codes(self, n):
         """
         Accepts a key number, presumably of a code that was just used, and marks
@@ -216,13 +216,50 @@ class Pool():
         return s
 
 
+class Counter():
+    def __init__(self, filename, start=None):
+        self.filename = filename
+        with open(self.filename, 'r') as file:
+            if file.read() == '':
+                start = -1
+        if start is not None:
+            self._set(start)
+
+    def _set(self, num):
+        with open(self.filename, 'w') as file:
+            file.write(str(num))
+
+    def __call__(self):
+        with open(self.filename, 'r') as file:
+            num = int(file.read())
+        num += 1
+        self._set(num)
+        return num
+
+class Relay():
+    def __init__(self, pins):
+        self.pins = [machine.Pin(i, machine.Pin.OUT) for i in pins]
+        for pin in self.pins:
+            pin.value(1)
+
+    def unlock_bike(bike_num):
+        self.pins[bike_num].value(0)
+        time.sleep(5)
+        self.pins[bike_num].value(1)
+
+pin2 = machine.Pin(2, machine.Pin.OUT)
+pin2.value(1)
 kp = Keypad((21, 22, 23), (16, 17, 18, 19))
 hotp = HOTP("ITSAKEY", sha256.sha256)
 pool = Pool(10, hotp, 3600) #set invalid time to an hour (3600 seconds)
 counter = 10 #Set counter to 10 initially because calling Pool() initializes the first 10 keys
+relay = Relay((4, 15, 10, 9, 13, 12, 14, 27, 26, 25, 33, 32))
 
+pin2.value(0)
 print(pool)
 
 while True:
-    print(pool.accept_code(kp.get_input_message()))
-    time.sleep(0.1)
+    result = pool.accept_code(kp.get_input_message())
+    print(result)
+    if result is not None:
+        relay.unlock_bike(result)
