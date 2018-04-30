@@ -242,7 +242,7 @@ class Relay():
         for pin in self.pins:
             pin.value(1)
 
-    def unlock_bike(bike_num):
+    def unlock_bike(self, bike_num):
         self.pins[bike_num].value(0)
         time.sleep(5)
         self.pins[bike_num].value(1)
