@@ -373,7 +373,7 @@ hotp = HOTP("ITSAKEY", sha256.sha256)
 counter = 10
 
 # set invalid time limit to an hour (3600 seconds)
-pool = Pool(10, hotp, counter 3600)
+pool = Pool(10, hotp, counter, 3600)
 
 relay = Relay((4, 0, 15, 10, 9, 13, 14, 27, 26, 25, 33, 32))
 
