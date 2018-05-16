@@ -204,7 +204,7 @@ class Pool():
         self.encryption = encryption
         self.counter = counter
         self.inval_time_limit = inval_time_limit
-        self.repopulate(0)
+        self.repopulate()
 
     def repopulate(self):
         """
@@ -268,7 +268,7 @@ class Pool():
                         self.remove_inval_codes()
                         self.invalidate_codes(key.n)
                         # update counter here
-                        self.counter = self.repopulate(self.counter)
+                        self.counter = self.repopulate()
                         return j
 
         return None
