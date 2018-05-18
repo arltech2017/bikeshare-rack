@@ -247,7 +247,7 @@ class Relay():
 #pin2.value(1)
 #kp = Keypad((21, 22, 23), (16, 17, 18, 19))
 hotp = HOTP("ITSAKEY", sha256.sha256)
-pool = Pool(20, hotp, 3600) #set invalid time to an hour (3600 seconds)
+pool = Pool(15, hotp, 3600) #set invalid time to an hour (3600 seconds)
 counter = 10 #Set counter to 10 initially because calling Pool() initializes the first 10 keys
 #relay = Relay((4, 0, 15, 10, 9, 13, 12, 14, 27, 26, 25, 33, 32))
 

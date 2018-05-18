@@ -370,11 +370,11 @@ kp = Keypad((21, 22, 23), (16, 17, 18, 19))
 hotp = HOTP("ITSAKEY", sha256.sha256)
 # Set counter to 10 initially because calling Pool() initializes the first 10
 # keys
-counter = 10
+counter = 0
 
 # set invalid time limit to an hour (3600 seconds)
 pool = Pool(10, hotp, counter, 3600)
-
+print(pool)
 relay = Relay((4, 0, 15, 10, 9, 13, 14, 27, 26, 25, 33, 32))
 
 # Turn ESP32 blue light off to signify setup completion
@@ -384,5 +384,7 @@ pin2.value(0)
 # bike if the input is accepted as a code.
 while True:
     result = pool.accept_code(kp.get_input_message())
+    print(result)
     if result is not None:
         relay.unlock_bike(result)
+        print(pool)
