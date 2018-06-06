@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 
-import os
-
 __appname__     = "lib"
 __author__      = "Marco Sirabella"
 __copyright__   = ""
@@ -18,11 +16,13 @@ __module__      = ""
 class Counter():
     def __init__(self, filename, start=None):
         self.filename = filename
-        if not os.path.exists(self.filename):
-            with open(self.filename, "w+"):
-                pass  # MAKE FILE
+        with open(self.filename, "w+"):
+            pass  # create file just in case
 
-        if os.path.getsize(self.filename) == 0:  # true if file created
+        with open(self.filename, 'r') as file:
+            isempty = bool(file.read())
+
+        if isempty:
             if start is None:
                 start = -1
             self.__set__(None, start)
