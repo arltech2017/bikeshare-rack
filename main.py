@@ -364,12 +364,28 @@ class Relay():
         time.sleep(unlocktime)
         self.pins[bike_num].value(1)
 
+kp = Keypad((21, 22, 23), (16, 17, 18, 19))
+relay = Relay((4, 0, 15, 10, 9, 13, 14, 27, 26, 25, 33, 32))
+pin2 = machine.Pin(2, machine.Pin.OUT)
+
+DEBUG = False
+if DEBUG:
+    # Debug mode
+    while True:
+        try:
+            z = kp.get_input_message()
+            relay.unlock_bike(int(z) - 1, 1)
+        except (ValueError, IndexError) as e:
+            print(e)
+            print(z)
+            pin2.value(1)
+            time.sleep(1)
+            pin2.value(0)
+
 
 # Turn ESP32 blue light on for dev testing
-pin2 = machine.Pin(2, machine.Pin.OUT)
 pin2.value(1)
 
-kp = Keypad((21, 22, 23), (16, 17, 18, 19))
 hotp = HOTP("ITSAKEY", sha256.sha256)
 # Set counter to 10 initially because calling Pool() initializes the first 10
 # keys
@@ -378,9 +394,11 @@ counter = 0
 # set invalid time limit to an hour (3600 seconds)
 pool = Pool(10, hotp, counter, 3600)
 print(pool)
-relay = Relay((4, 0, 15, 10, 9, 13, 14, 27, 26, 25, 33, 32))
 
 # Turn ESP32 blue light off to signify setup completion
+
+for bike in range(12):
+    relay.unlock_bike(bike)
 pin2.value(0)
 
 # Main loop, continually tries to accept input from the keypad, and unlocks the
