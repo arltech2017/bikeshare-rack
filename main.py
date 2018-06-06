@@ -218,11 +218,11 @@ class Pool():
         """
         for i in range(len(self.pool)):
             if not self.pool[i]:
-                key = self.encryption.at(self.counter)
-                self.pool[i] = Key(key, self.counter)
-                self.counter += 1
+                key = self.encryption.at(self.counter.__get__(self))
+                self.pool[i] = Key(key, self.counter.__get__(self))
+                self.counter.__set__(self, self.counter.__get__(self) + 1)
         print("Done repopulating pool")
-        return self.counter
+        return self.counter.__get__(self)
 
     def remove_key(self, key):
         """
@@ -384,6 +384,6 @@ while True:
         print(result)
         relay.unlock_bike(result)
         # TODO / BUG: code freezes during repopulation, impliment async
-        pool.counter = pool.repopulate()
+        pool.counter.__set__(pool, pool.repopulate())
         print(pool)
         pin2.value(0)
