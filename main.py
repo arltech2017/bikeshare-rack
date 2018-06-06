@@ -9,6 +9,8 @@ import time
 import hmac
 from hashlib import _sha256 as sha256
 
+from lib import Counter
+
 # The hmac library's sha256 is broken, so use our version,
 # downloaded from the micropython repo
 
@@ -191,7 +193,10 @@ class Pool():
     forever looking for that code, even when other codes are being distributed
     by the server. A pool of available codes is the solution.
     """
-    def __init__(self, size, encryption, counter, inval_time_limit):
+
+    counter = Counter("counter")
+
+    def __init__(self, size, encryption, inval_time_limit):
         """
         Accepts three arguments:
             -the size of the pool
@@ -202,7 +207,6 @@ class Pool():
         """
         self.pool = [None] * size
         self.encryption = encryption
-        self.counter = counter
         self.inval_time_limit = inval_time_limit
         self.repopulate()
 
@@ -306,33 +310,6 @@ class Pool():
         return s
 
 
-class Counter():
-    """
-    A class for storing the 'counter' int, which is incremented and used to
-    generate the passcodes. Reads and writes to a file on the microcontroller
-    to survive reboot.
-    """
-
-    def __init__(self, filename, start=None):
-        self.filename = filename
-        with open(self.filename, 'r') as file:
-            if file.read() == '':
-                start = -1
-        if start is not None:
-            self._set(start)
-
-    def _set(self, num):
-        with open(self.filename, 'w') as file:
-            file.write(str(num))
-
-    def __call__(self):
-        with open(self.filename, 'r') as file:
-            num = int(file.read())
-        num += 1
-        self._set(num)
-        return num
-
-
 class Relay():
     """
     An interface for the relay, which physically unlocks the bikes on the rack.
@@ -386,12 +363,9 @@ if DEBUG:
 pin2.value(1)
 
 hotp = HOTP("ITSAKEY", sha256.sha256)
-# Set counter to 10 initially because calling Pool() initializes the first 10
-# keys
-counter = 0
 
 # set invalid time limit to an hour (3600 seconds)
-pool = Pool(10, hotp, counter, 3600)
+pool = Pool(10, hotp, 3600)
 print(pool)
 
 # Turn ESP32 blue light off to signify setup completion

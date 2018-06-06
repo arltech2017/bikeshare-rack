@@ -41,34 +41,6 @@ class HOTP():
 
 
 
-class Counter():
-    def __init__(self, filename, start=None):
-        self.filename = filename
-        if not os.path.exists(self.filename) \
-           or os.path.getsize(self.filename) == 0:
-            if start is not None:
-                start = -1
-            self.__set__(None, start)
-
-    def __call__(self):
-        num = self.__get__(None)
-        num += 1
-        self.__set__(None, num)
-        return num
-
-    def __get__(self, obj, _type=None):
-        with open(self.filename, 'r') as file:
-            return int(file.read())
-
-    def __set__(self, obj, value):
-        assert isinstance(value, int)
-        with open(self.filename, 'w') as file:
-            file.write(str(value))
-
-    def __delete__(self, obj):
-        raise AttributeError("can't delete attribute")
-
-
 hotp = HOTP("ITSAKEY", sha256.sha256)
 
 c = Counter("index.txt")
