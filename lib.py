@@ -20,12 +20,15 @@ class Counter():
             pass  # create file just in case
 
         with open(self.filename, 'r') as file:
-            isempty = bool(file.read())
+            isempty = len(file.read()) == 0
 
+        print('isempty', isempty)
         if isempty:
             if start is None:
                 start = -1
             self.__set__(None, start)
+        else:
+            self.__get__()  # test out is integer
 
     def __call__(self):
         num = self.__get__(None)
