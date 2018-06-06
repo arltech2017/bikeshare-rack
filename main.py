@@ -409,6 +409,7 @@ while True:
         pin2.value(1)
         print(result)
         relay.unlock_bike(result)
+        # TODO / BUG: code freezes during repopulation, impliment async
         pool.counter = pool.repopulate()
         print(pool)
         pin2.value(0)
