@@ -268,7 +268,6 @@ class Pool():
                         self.remove_inval_codes()
                         self.invalidate_codes(key.n)
                         # update counter here
-                        self.counter = self.repopulate()
                         return j
 
         return None
@@ -407,5 +406,9 @@ while True:
     result = pool.accept_code(kp.get_input_message())
     print(result)
     if result is not None:
+        pin2.value(1)
+        print(result)
         relay.unlock_bike(result)
+        pool.counter = pool.repopulate()
         print(pool)
+        pin2.value(0)
