@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 
+import os
+
 __appname__     = "lib"
 __author__      = "Marco Sirabella"
 __copyright__   = ""
