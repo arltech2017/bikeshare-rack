@@ -7,10 +7,10 @@
 import machine
 import time
 import hmac
+from hashlib import _sha256 as sha256
 
 # The hmac library's sha256 is broken, so use our version,
 # downloaded from the micropython repo
-import _sha256 as sha256
 
 
 class Keypad():
