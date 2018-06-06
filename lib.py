@@ -16,8 +16,11 @@ __module__      = ""
 class Counter():
     def __init__(self, filename, start=None):
         self.filename = filename
-        if not os.path.exists(self.filename) \
-           or os.path.getsize(self.filename) == 0:
+        if not os.path.exists(self.filename):
+            with open(self.filename, "w+"):
+                pass  # MAKE FILE
+
+        if os.path.getsize(self.filename) == 0:  # true if file created
             if start is not None:
                 start = -1
             self.__set__(None, start)
