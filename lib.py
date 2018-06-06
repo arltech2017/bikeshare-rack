@@ -23,7 +23,7 @@ class Counter():
                 pass  # MAKE FILE
 
         if os.path.getsize(self.filename) == 0:  # true if file created
-            if start is not None:
+            if start is None:
                 start = -1
             self.__set__(None, start)
 
@@ -38,7 +38,7 @@ class Counter():
             return int(file.read())
 
     def __set__(self, obj, value):
-        assert isinstance(value, int)
+        assert isinstance(value, int), (value, type(value))
         with open(self.filename, 'w') as file:
             file.write(str(value))
 
