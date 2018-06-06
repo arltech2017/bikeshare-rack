@@ -353,12 +353,15 @@ class Relay():
         for pin in self.pins:
             pin.value(1)
 
-    def unlock_bike(self, bike_num):
+    def unlock_bike(self, bike_num, unlocktime=None):
         """
         Unlocks the bike of 'bike_num', which corresponds to 'self.pins' index
         """
+        if unlocktime is None:
+            unlocktime = self.unlocktime
+
         self.pins[bike_num].value(0)
-        time.sleep(self.unlocktime)
+        time.sleep(unlocktime)
         self.pins[bike_num].value(1)
 
 
