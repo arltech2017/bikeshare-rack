@@ -345,6 +345,11 @@ relay = Relay((4, 0, 15, 10, 9, 13, 14, 27, 26, 25, 33, 32))
 pin2 = machine.Pin(2, machine.Pin.OUT)
 
 DEBUG = False
+
+if DEBUG:
+    for bike in range(12):
+        relay.unlock_bike(bike)
+
 if DEBUG:
     # Debug mode
     while True:
@@ -369,9 +374,6 @@ pool = Pool(10, hotp, 3600)
 print(pool)
 
 # Turn ESP32 blue light off to signify setup completion
-
-for bike in range(12):
-    relay.unlock_bike(bike)
 pin2.value(0)
 
 # Main loop, continually tries to accept input from the keypad, and unlocks the
