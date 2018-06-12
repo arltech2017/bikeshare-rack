@@ -28,7 +28,7 @@ class Counter():
                 start = -1
             self.__set__(None, start)
         else:
-            self.__get__()  # test out is integer
+            self.__get__(None)  # test out is integer
 
     def __call__(self):
         num = self.__get__(None)
