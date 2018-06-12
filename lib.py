@@ -16,7 +16,7 @@ __module__      = ""
 class Counter():
     def __init__(self, filename, start=None):
         self.filename = filename
-        with open(self.filename, "w+"):
+        with open(self.filename, "a"):
             pass  # create file just in case
 
         with open(self.filename, 'r') as file:
