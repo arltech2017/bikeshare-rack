@@ -1,0 +1,2 @@
+micropython-hmac
+micropython-contextlib
