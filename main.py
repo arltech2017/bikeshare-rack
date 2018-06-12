@@ -319,8 +319,6 @@ class Relay():
     change.
     """
 
-    unlocktime = 5  # How many seconds the bikes are unlocked for
-
     def __init__(self, pins):
         """
         Sets up the pins connected to the relay as output, as passed by 'pins'.
@@ -336,13 +334,10 @@ class Relay():
     def close_motor(self, index):
         self.pins[index].value(1)
 
-    def unlock_bike(self, bike_num, unlocktime=None):
+    def unlock_bike(self, bike_num, unlocktime=5):
         """
         Unlocks the bike of 'bike_num', which corresponds to 'self.pins' index
         """
-        if unlocktime is None:
-            unlocktime = self.unlocktime
-
         with self(unlocktime):
             time.sleep(unlocktime)
 
