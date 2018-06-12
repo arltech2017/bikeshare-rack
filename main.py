@@ -8,6 +8,7 @@ import machine
 import time
 import hmac
 from hashlib import _sha256 as sha256
+from contextlib import contextmanager
 
 from lib import Counter
 
@@ -326,8 +327,14 @@ class Relay():
         HIGH is closed, so output a signal for all pins.
         """
         self.pins = [machine.Pin(i, machine.Pin.OUT) for i in pins]
-        for pin in self.pins:
-            pin.value(1)
+        for i in range(len(self.pins)):
+            self.close_motor(i)
+
+    def open_motor(self, index):
+        self.pins[index].value(0)
+
+    def close_motor(self, index):
+        self.pins[index].value(1)
 
     def unlock_bike(self, bike_num, unlocktime=None):
         """
@@ -336,9 +343,15 @@ class Relay():
         if unlocktime is None:
             unlocktime = self.unlocktime
 
-        self.pins[bike_num].value(0)
-        time.sleep(unlocktime)
-        self.pins[bike_num].value(1)
+        with self(unlocktime):
+            time.sleep(unlocktime)
+
+    @contextmanager
+    def __call__(self, bike_num):
+        self.open_motor(bike_num)
+        yield
+        self.close_motor(bike_num)
+
 
 kp = Keypad((21, 22, 23), (16, 17, 18, 19))
 relay = Relay((4, 0, 15, 10, 9, 13, 14, 27, 26, 25, 33, 32))
@@ -379,13 +392,13 @@ pin2.value(0)
 # Main loop, continually tries to accept input from the keypad, and unlocks the
 # bike if the input is accepted as a code.
 while True:
-    result = pool.accept_code(kp.get_input_message())
-    print(result)
-    if result is not None:
+    bike_index = pool.accept_code(kp.get_input_message())
+    print(bike_index)
+    if bike_index is not None:
         pin2.value(1)
-        print(result)
-        relay.unlock_bike(result)
-        # TODO / BUG: code freezes during repopulation, impliment async
-        pool.counter.__set__(pool, pool.repopulate())
-        print(pool)
+        print(bike_index)
+        with relay(bike_index):
+            # TODO / BUG: code freezes during repopulation, impliment async
+            pool.counter.__set__(pool, pool.repopulate())
+            print(pool)
         pin2.value(0)
